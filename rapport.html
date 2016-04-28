@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>Trades analysis</title>
+<title>rapport</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -130,14 +130,14 @@ div#notebook {
   div.cell {
     display: block;
     page-break-inside: avoid;
-  }
-  div.output_wrapper {
+  } 
+  div.output_wrapper { 
     display: block;
-    page-break-inside: avoid;
+    page-break-inside: avoid; 
   }
-  div.output {
+  div.output { 
     display: block;
-    page-break-inside: avoid;
+    page-break-inside: avoid; 
   }
 }
 </style>
@@ -176,35 +176,32 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Analysis-of-charts">Analysis of charts<a class="anchor-link" href="#Analysis-of-charts">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>This document analysis the main exchanges trading in BTC-USD</p>
-
+<h2 id="Donn&#233;es-de-trades">Donn&#233;es de trades<a class="anchor-link" href="#Donn&#233;es-de-trades">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span>
-<span class="kn">import</span> <span class="nn">codecs</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">math</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;ilkhem&#39;</span>
+
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
 <span class="kn">import</span> <span class="nn">plotly.graph_objs</span> <span class="k">as</span> <span class="nn">go</span>
 <span class="kn">import</span> <span class="nn">plotly.plotly</span> <span class="k">as</span> <span class="nn">py</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">from</span> <span class="nn">tabulate</span> <span class="k">import</span> <span class="n">tabulate</span>
 </pre></div>
 
 </div>
@@ -212,30 +209,30 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>We will use the trades dumps available at Kaiko's API (docs.kaiko.com) for all exchanges trading in USD for 2016</p>
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#GLOBAL USEFUL VARIABLES </span>
+<span class="n">exchangesListUSD</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;gi&#39;</span><span class="p">,</span> <span class="s1">&#39;ib&#39;</span><span class="p">,</span> <span class="s1">&#39;kk&#39;</span><span class="p">,</span> <span class="s1">&#39;bf&#39;</span><span class="p">,</span> <span class="s1">&#39;cb&#39;</span><span class="p">,</span> <span class="s1">&#39;hb&#39;</span><span class="p">,</span> <span class="s1">&#39;be&#39;</span><span class="p">,</span> <span class="s1">&#39;bs&#39;</span><span class="p">,</span> <span class="s1">&#39;oc&#39;</span><span class="p">]</span>
+</pre></div>
 
 </div>
 </div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;../Python scripts/&#39;</span><span class="p">)</span>
-<span class="c1">#read trades from csv</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;loading trades from csv....&#39;</span><span class="p">)</span>
-<span class="n">directory</span> <span class="o">=</span> <span class="s1">&#39;Orderbooks/files&#39;</span>
-<span class="n">trades2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;amount&#39;</span> <span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;sell&#39;</span> <span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;price&#39;</span> <span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;exchange&#39;</span> <span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;date&#39;</span> <span class="p">:</span> <span class="p">[]})</span>
-<span class="k">for</span> <span class="n">dirpath</span><span class="p">,</span> <span class="n">dirnames</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-        <span class="n">trades2</span> <span class="o">=</span> <span class="n">trades2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">dirpath</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">file</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">na_values</span><span class="o">=</span><span class="s1">&#39;null&#39;</span><span class="p">,</span><span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;amount&#39;</span><span class="p">,</span><span class="s1">&#39;sell&#39;</span><span class="p">,</span><span class="s1">&#39;price&#39;</span><span class="p">,</span><span class="s1">&#39;exchange&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">]),</span><span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#get index</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://api.kaiko.com/v1/history/indices?indices=global&amp;from=1451257200&amp;resolution=week&quot;</span>
+<span class="n">idx</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))[</span><span class="s2">&quot;global&quot;</span><span class="p">])</span>
+<span class="n">idx</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcfromtimestamp</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="n">idx</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -246,118 +243,183 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>loading trades from csv....
-Gemini_BTCUSD_2016_01.csv
-Kraken_BTCUSD_2016_01.csv
-Bitfinex_BTCUSD_2016_04.csv
-Coinbase_BTCUSD_2016_03.csv
-Itbit_BTCUSD_2016_01.csv
-Coinbase_BTCUSD_2016_04.csv
-BTC-e_BTCUSD_2016_04.csv
-Coinbase_BTCUSD_2016_01.csv
-Bitstamp_BTCUSD_2016_04.csv
-Itbit_BTCUSD_2016_03.csv
-Kraken_BTCUSD_2016_03.csv
-Bitstamp_BTCUSD_2016_03.csv
-</pre>
+<div class="output_area"><div class="prompt output_prompt">Out[6]:</div>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>c</th>
+      <th>h</th>
+      <th>l</th>
+      <th>o</th>
+      <th>timestamp</th>
+      <th>v</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>440.665518</td>
+      <td>467.588196</td>
+      <td>435.576276</td>
+      <td>457.934846</td>
+      <td>2016-04-25</td>
+      <td>6827235.7561439965</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>457.847448</td>
+      <td>459.560203</td>
+      <td>411.221189</td>
+      <td>427.548973</td>
+      <td>2016-04-18</td>
+      <td>13607105.197364165</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>427.539360</td>
+      <td>433.278725</td>
+      <td>395.349808</td>
+      <td>420.711169</td>
+      <td>2016-04-11</td>
+      <td>9742249.807981936</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>420.733466</td>
+      <td>424.239140</td>
+      <td>384.276536</td>
+      <td>420.617901</td>
+      <td>2016-04-04</td>
+      <td>8476423.77752824</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>420.439814</td>
+      <td>427.891834</td>
+      <td>396.119901</td>
+      <td>427.505608</td>
+      <td>2016-03-28</td>
+      <td>18199902.344134204</td>
+    </tr>
+  </tbody>
+</table>
 </div>
 </div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">getWeek</span><span class="p">(</span><span class="n">ts</span><span class="p">):</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcfromtimestamp</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">year</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">t</span><span class="o">.</span><span class="n">year</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">:</span>     
+        <span class="n">length</span><span class="o">=</span><span class="p">[</span><span class="mi">31</span><span class="p">,</span><span class="mi">29</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">]</span>
+    <span class="k">else</span> <span class="p">:</span>
+        <span class="n">length</span><span class="o">=</span><span class="p">[</span><span class="mi">31</span><span class="p">,</span><span class="mi">28</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">31</span><span class="p">]</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">weekday</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">day</span><span class="o">-</span><span class="n">f</span><span class="o">&lt;</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="o">&lt;</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">year</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="n">length</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">f</span><span class="o">+</span><span class="n">t</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">year</span><span class="p">,</span><span class="n">t</span><span class="o">.</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">length</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">f</span><span class="o">+</span><span class="n">t</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">year</span><span class="p">,</span><span class="n">t</span><span class="o">.</span><span class="n">month</span><span class="p">,</span><span class="n">t</span><span class="o">.</span><span class="n">day</span><span class="o">-</span><span class="n">f</span><span class="p">)</span>
+
+<span class="c1"># get volume by week for each exchange</span>
+
+<span class="n">directory</span> <span class="o">=</span> <span class="s2">&quot;../Kaiko/data/trades/usd/&quot;</span>
+
+<span class="n">vol</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;exchange&#39;</span><span class="p">:[],</span><span class="s1">&#39;date&#39;</span><span class="p">:[],</span><span class="s1">&#39;amount&#39;</span><span class="p">:[]})</span>
+
+<span class="k">for</span> <span class="n">dirpath</span><span class="p">,</span> <span class="n">dirnames</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">directory</span><span class="o">+</span><span class="n">file</span><span class="p">,</span><span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;exchange&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;amount&#39;</span><span class="p">])</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">getWeek</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">1000</span><span class="p">)))</span>
+        <span class="n">xch</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">exchange</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="c1">#         print(xch)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;exchange&#39;</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;exchange&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xch</span>
+        <span class="n">vol</span> <span class="o">=</span> <span class="n">vol</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+<span class="n">vol</span><span class="o">.</span><span class="n">amount</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">vol</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stderr output_text">
 <pre>/home/ilyes/anaconda3/lib/python3.5/site-packages/IPython/core/interactiveshell.py:2723: DtypeWarning:
 
-Columns (6) have mixed types. Specify dtype option on import or set low_memory=False.
+Columns (5) have mixed types. Specify dtype option on import or set low_memory=False.
 
 </pre>
 </div>
 </div>
 
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Bitstamp_BTCUSD_2016_01.csv
-Huobi_BTCUSD_2016_04.csv
-BTC-e_BTCUSD_2016_03.csv
-BTC-e_BTCUSD_2016_01.csv
-Kraken_BTCUSD_2016_04.csv
-Itbit_BTCUSD_2016_02.csv
-Gemini_BTCUSD_2016_03.csv
-OkCoin_BTCUSD_2016_02.csv
-OkCoin_BTCUSD_2016_01.csv
-Bitstamp_BTCUSD_2016_02.csv
-Coinbase_BTCUSD_2016_02.csv
-Gemini_BTCUSD_2016_04.csv
-Bitfinex_BTCUSD_2016_01.csv
-OkCoin_BTCUSD_2016_03.csv
-Bitfinex_BTCUSD_2016_03.csv
-Huobi_BTCUSD_2016_03.csv
-BTC-e_BTCUSD_2016_02.csv
-Bitfinex_BTCUSD_2016_02.csv
-Itbit_BTCUSD_2016_04.csv
-Huobi_BTCUSD_2016_02.csv
-Kraken_BTCUSD_2016_02.csv
-OkCoin_BTCUSD_2016_04.csv
-Gemini_BTCUSD_2016_02.csv
-Huobi_BTCUSD_2016_01.csv
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">trades2</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">trades2</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">1000</span><span class="p">))</span>
-<span class="n">trades2</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">trades2</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">year</span><span class="p">,</span><span class="n">x</span><span class="o">.</span><span class="n">month</span><span class="p">,</span><span class="n">x</span><span class="o">.</span><span class="n">day</span><span class="p">))</span>
-<span class="c1">#%%</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">trades2</span><span class="o">.</span><span class="n">day</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-<span class="n">x</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-<span class="n">y</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;gi&#39;</span><span class="p">:[],</span><span class="s1">&#39;be&#39;</span><span class="p">:[],</span><span class="s1">&#39;hb&#39;</span><span class="p">:[],</span><span class="s1">&#39;ib&#39;</span><span class="p">:[],</span><span class="s1">&#39;bs&#39;</span><span class="p">:[],</span><span class="s1">&#39;bf&#39;</span><span class="p">:[],</span><span class="s1">&#39;kk&#39;</span><span class="p">:[],</span><span class="s1">&#39;oc&#39;</span><span class="p">:[],</span><span class="s1">&#39;cb&#39;</span><span class="p">:[]}</span>
-<span class="k">for</span> <span class="n">xch</span> <span class="ow">in</span> <span class="n">trades2</span><span class="o">.</span><span class="n">exchange</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
-    <span class="n">temp</span> <span class="o">=</span> <span class="n">trades2</span><span class="p">[</span><span class="n">trades2</span><span class="p">[</span><span class="s1">&#39;exchange&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">xch</span><span class="p">]</span>
-    <span class="n">y</span><span class="p">[</span><span class="n">xch</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">temp</span><span class="p">[</span><span class="n">temp</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">d</span><span class="p">]</span><span class="o">.</span><span class="n">amount</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">temp</span><span class="p">[</span><span class="n">temp</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">d</span><span class="p">])</span> <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">temp</span><span class="p">[</span><span class="n">temp</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">d</span><span class="p">])</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span><span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">x</span> <span class="p">]</span>
-    <span class="n">temp</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="n">y</span><span class="p">[</span><span class="s1">&#39;cb&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="s1">&#39;cb&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dic</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;gi&#39;</span><span class="p">:</span><span class="s1">&#39;Gemini&#39;</span><span class="p">,</span><span class="s1">&#39;be&#39;</span><span class="p">:</span><span class="s1">&#39;BTC-e&#39;</span><span class="p">,</span><span class="s1">&#39;hb&#39;</span><span class="p">:</span><span class="s1">&#39;Huobi&#39;</span><span class="p">,</span><span class="s1">&#39;ib&#39;</span><span class="p">:</span><span class="s1">&#39;Itbit&#39;</span><span class="p">,</span><span class="s1">&#39;bs&#39;</span><span class="p">:</span><span class="s1">&#39;Bitstamp&#39;</span><span class="p">,</span><span class="s1">&#39;bf&#39;</span><span class="p">:</span><span class="s1">&#39;Bitfinex&#39;</span><span class="p">,</span><span class="s1">&#39;kk&#39;</span><span class="p">:</span><span class="s1">&#39;Kraken&#39;</span><span class="p">,</span><span class="s1">&#39;oc&#39;</span><span class="p">:</span><span class="s1">&#39;OkCoin&#39;</span><span class="p">,</span><span class="s1">&#39;cb&#39;</span><span class="p">:</span><span class="s1">&#39;Coinbase&#39;</span><span class="p">}</span>
-<span class="n">trace</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">xch</span> <span class="ow">in</span> <span class="n">trades2</span><span class="o">.</span><span class="n">exchange</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
-    <span class="n">trace</span> <span class="o">=</span> <span class="n">trace</span> <span class="o">+</span> <span class="p">[</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">[</span><span class="n">xch</span><span class="p">],</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="n">dic</span><span class="p">[</span><span class="n">xch</span><span class="p">])]</span>
-<span class="n">layout</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Average amount per trade per day&#39;</span><span class="p">,</span><span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Day&#39;</span><span class="p">),</span><span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Average amount per trade&#39;</span><span class="p">))</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">trace</span><span class="p">,</span><span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">)</span>
-<span class="n">py</span><span class="o">.</span><span class="n">iplot</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;avg-amount-per-trade-per-day-2016&#39;</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[8]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[9]:</div>
 
 <div class="output_html rendered_html output_subarea output_execute_result">
-<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~ilkhem/23.embed" height="525px" width="100%"></iframe>
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>amount</th>
+      <th>date</th>
+      <th>exchange</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>714.429007</td>
+      <td>2015-12-28</td>
+      <td>gi</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>3912.415768</td>
+      <td>2016-01-04</td>
+      <td>gi</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>5375.083759</td>
+      <td>2016-01-11</td>
+      <td>gi</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>14880.941205</td>
+      <td>2016-01-18</td>
+      <td>gi</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4543.530958</td>
+      <td>2016-01-25</td>
+      <td>gi</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 </div>
 
 </div>
@@ -365,47 +427,131 @@ Huobi_BTCUSD_2016_01.csv
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Itbit has by far the highest average amount per trade. That can be caused by either very little trades per day compared to the other exchanges, or serious traders creating trades with high volume. It is also highly fluctuating and this favors the second explanation. Bitfinex and Gemini both show high average amount per trade too compared to the rest of the exchanges. The charts we will plot next will allow us to get an explanation for this.</p>
-<p>Let's look closely at the data we got from Kaiko's dumps.</p>
-<p>First, we will divide the bitcoin amounts into buckets of powers of 10. For each exchange, we will count the number of trades that happened for each bucket, and also the volume of traded bitcoin for each bucket.</p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">trades2</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">idx</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;timestamp&#39;</span><span class="p">)[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">])</span>
 <span class="n">dic</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;gi&#39;</span><span class="p">:</span><span class="s1">&#39;Gemini&#39;</span><span class="p">,</span><span class="s1">&#39;be&#39;</span><span class="p">:</span><span class="s1">&#39;BTC-e&#39;</span><span class="p">,</span><span class="s1">&#39;hb&#39;</span><span class="p">:</span><span class="s1">&#39;Huobi&#39;</span><span class="p">,</span><span class="s1">&#39;ib&#39;</span><span class="p">:</span><span class="s1">&#39;Itbit&#39;</span><span class="p">,</span><span class="s1">&#39;bs&#39;</span><span class="p">:</span><span class="s1">&#39;Bitstamp&#39;</span><span class="p">,</span><span class="s1">&#39;bf&#39;</span><span class="p">:</span><span class="s1">&#39;Bitfinex&#39;</span><span class="p">,</span><span class="s1">&#39;kk&#39;</span><span class="p">:</span><span class="s1">&#39;Kraken&#39;</span><span class="p">,</span><span class="s1">&#39;oc&#39;</span><span class="p">:</span><span class="s1">&#39;OkCoin&#39;</span><span class="p">,</span><span class="s1">&#39;cb&#39;</span><span class="p">:</span><span class="s1">&#39;Coinbase&#39;</span><span class="p">}</span>
-<span class="n">trace</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">xch</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">trades2</span><span class="o">.</span><span class="n">exchange</span><span class="o">.</span><span class="n">unique</span><span class="p">()):</span>
-    <span class="n">trace</span> <span class="o">=</span> <span class="n">trace</span> <span class="o">+</span> <span class="p">[</span><span class="n">go</span><span class="o">.</span><span class="n">Histogram</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;exchange&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">xch</span><span class="p">]</span><span class="o">.</span><span class="n">amount</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span> <span class="k">else</span> <span class="o">-</span><span class="mi">10</span><span class="p">),</span><span class="n">histnorm</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">opacity</span><span class="o">=</span><span class="mf">0.66</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="n">dic</span><span class="p">[</span><span class="n">xch</span><span class="p">])]</span>
-    <span class="c1"># histornm in &#39;&#39;, &#39;percent&#39; , &#39;probability&#39; , &#39;density&#39; , &#39;probability density</span>
 
+<span class="n">trace</span> <span class="o">=</span> <span class="p">[</span><span class="n">go</span><span class="o">.</span><span class="n">Bar</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">vol</span><span class="p">[</span><span class="n">vol</span><span class="p">[</span><span class="s1">&#39;exchange&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">xch</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="s1">&#39;amount&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">),</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.77</span><span class="p">,</span><span class="n">name</span> <span class="o">=</span> <span class="n">dic</span><span class="p">[</span><span class="n">xch</span><span class="p">]</span> <span class="p">)</span> <span class="k">for</span> <span class="n">xch</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">vol</span><span class="o">.</span><span class="n">exchange</span><span class="o">.</span><span class="n">unique</span><span class="p">())]</span>
+    
+<span class="n">trace</span> <span class="o">=</span> <span class="n">trace</span> <span class="o">+</span> <span class="p">[</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">idx</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;timestamp&#39;</span><span class="p">)[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">),</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.77</span><span class="p">,</span> <span class="n">yaxis</span><span class="o">=</span><span class="s1">&#39;y2&#39;</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Price&#39;</span><span class="p">)]</span>
 <span class="n">layout</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span>
-    <span class="n">barmode</span><span class="o">=</span><span class="s1">&#39;group&#39;</span><span class="p">,</span> <span class="c1">#stack, overlay, group</span>
-    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Number of trades per amount per exchange in BTC-USD for 2016&#39;</span><span class="p">,</span>
-    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">title</span><span class="o">=</span><span class="s1">&#39;log10(amount)&#39;</span>
-    <span class="p">),</span>
-    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Count&#39;</span>
-    <span class="p">),</span>
-    <span class="n">bargap</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
-    <span class="n">bargroupgap</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+        <span class="n">barmode</span><span class="o">=</span><span class="s1">&#39;stack&#39;</span><span class="p">,</span> <span class="c1">#stack, overlay, group</span>
+        <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Volume and price evolution over 6 months&#39;</span><span class="p">,</span>
+        <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s1">&#39;date&#39;</span>
+        <span class="p">),</span>
+        <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Volume&#39;</span><span class="p">,</span>
+            <span class="n">showgrid</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">rangemode</span><span class="o">=</span><span class="s1">&#39;tozero&#39;</span>
+        <span class="p">),</span>
+        <span class="n">yaxis2</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Price&#39;</span><span class="p">,</span>
+            <span class="n">overlaying</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span>
+            <span class="n">side</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span>
+            <span class="n">showgrid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">rangemode</span><span class="o">=</span><span class="s1">&#39;tozero&#39;</span>
+        <span class="p">),</span>
+<span class="c1">#            showlegend=False,</span>
+        <span class="n">bargap</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+        <span class="n">bargroupgap</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">d</span><span class="o">=</span><span class="kc">None</span>
+
 <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">trace</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">)</span>
-<span class="n">trace</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="n">py</span><span class="o">.</span><span class="n">iplot</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;all-xch-usd-2016&#39;</span><span class="p">)</span>
+<span class="n">py</span><span class="o">.</span><span class="n">iplot</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;rapport/total-xch-value-6m&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[10]:</div>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~ilkhem/85.embed" height="525px" width="100%"></iframe>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">cassandra.auth</span> <span class="k">import</span> <span class="n">PlainTextAuthProvider</span>
+<span class="kn">from</span> <span class="nn">cassandra.cluster</span> <span class="k">import</span> <span class="n">Cluster</span>
+<span class="kn">from</span> <span class="nn">cassandra.policies</span> <span class="k">import</span> <span class="n">WhiteListRoundRobinPolicy</span>
+
+<span class="c1">#authenticate, connect to the cluster then to the right keyspace</span>
+<span class="n">auth_provider</span> <span class="o">=</span> <span class="n">PlainTextAuthProvider</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s1">&#39;ro&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s1">&#39;_Lw43n.0VAyDQgwjUfFI&#39;</span><span class="p">)</span>
+<span class="n">servers_ip</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;52.2.206.236&#39;</span><span class="p">,</span><span class="s1">&#39;52.3.3.126&#39;</span><span class="p">,</span><span class="s1">&#39;52.90.186.188&#39;</span><span class="p">,</span><span class="s1">&#39;54.175.226.75&#39;</span><span class="p">,</span><span class="s1">&#39;52.90.36.116&#39;</span><span class="p">,</span><span class="s1">&#39;54.173.57.27&#39;</span><span class="p">,</span><span class="s1">&#39;54.86.207.68&#39;</span><span class="p">,</span><span class="s1">&#39;54.173.57.27&#39;</span><span class="p">]</span>
+<span class="n">lbp</span> <span class="o">=</span> <span class="n">WhiteListRoundRobinPolicy</span><span class="p">(</span><span class="n">servers_ip</span><span class="p">)</span>
+<span class="n">cluster</span> <span class="o">=</span> <span class="n">Cluster</span><span class="p">(</span><span class="n">contact_points</span> <span class="o">=</span> <span class="n">servers_ip</span><span class="p">,</span><span class="n">auth_provider</span> <span class="o">=</span> <span class="n">auth_provider</span><span class="p">,</span> 
+                  <span class="n">protocol_version</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">load_balancing_policy</span> <span class="o">=</span> <span class="n">lbp</span><span class="p">)</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">cluster</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="n">session</span><span class="o">.</span><span class="n">set_keyspace</span><span class="p">(</span><span class="s1">&#39;xchanges&#39;</span><span class="p">)</span>
+<span class="c1">#we are now connected</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;connected !&quot;</span><span class="p">)</span>
+
+<span class="n">query</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;select period,weights from index_weights_aggregated_by_week_3 where slug = &#39;regional_price_usd&#39;;&quot;</span><span class="p">)</span>
+<span class="n">weights</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">query</span><span class="o">.</span><span class="n">current_rows</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="n">query</span><span class="o">.</span><span class="n">column_names</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">classify</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span><span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span><span class="s1">&#39;v&#39;</span><span class="p">:</span><span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">())})</span>
+    <span class="n">l</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;v&#39;</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">ascending</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">l</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">l</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="n">r</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">r</span>
+    
+<span class="k">def</span> <span class="nf">getRank</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">xch</span> <span class="p">:</span>
+            <span class="k">return</span> <span class="n">r</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+
+
+<span class="n">weights</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weights</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">classify</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">xch</span> <span class="ow">in</span> <span class="n">exchangesListUSD</span> <span class="p">:</span>
+    <span class="n">weights</span><span class="p">[</span><span class="n">xch</span><span class="o">+</span><span class="s1">&#39;_t&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weights</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">getRank</span><span class="p">)</span>
+
+<span class="n">weights</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;weights&#39;</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">xch</span> <span class="ow">in</span> <span class="n">exchangesListUSD</span><span class="p">:</span>
+    <span class="n">weights</span><span class="p">[</span><span class="n">xch</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)):</span>   
+    <span class="k">for</span> <span class="n">xch</span> <span class="ow">in</span> <span class="n">exchangesListUSD</span><span class="p">:</span>    
+        <span class="k">try</span> <span class="p">:</span> 
+            <span class="k">if</span> <span class="n">weights</span><span class="p">[</span><span class="n">xch</span><span class="o">+</span><span class="s1">&#39;_t&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">weights</span><span class="p">[</span><span class="n">xch</span><span class="o">+</span><span class="s1">&#39;_t&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">weights</span><span class="p">[</span><span class="n">xch</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">xch</span><span class="o">+</span><span class="s1">&#39;_t&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; ↘&#39;</span>
+            <span class="k">elif</span> <span class="n">weights</span><span class="p">[</span><span class="n">xch</span><span class="o">+</span><span class="s1">&#39;_t&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">weights</span><span class="p">[</span><span class="n">xch</span><span class="o">+</span><span class="s1">&#39;_t&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">weights</span><span class="p">[</span><span class="n">xch</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">xch</span><span class="o">+</span><span class="s1">&#39;_t&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; ↗&#39;</span>
+            <span class="k">else</span> <span class="p">:</span>
+                <span class="n">weights</span><span class="p">[</span><span class="n">xch</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">xch</span><span class="o">+</span><span class="s1">&#39;_t&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; =&#39;</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="n">weights</span><span class="p">[</span><span class="n">xch</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">xch</span><span class="o">+</span><span class="s1">&#39;_t&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+<span class="n">weights</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="n">xch</span><span class="o">+</span><span class="s1">&#39;_t&#39;</span> <span class="k">for</span> <span class="n">xch</span> <span class="ow">in</span> <span class="n">exchangesListUSD</span><span class="p">],</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">weights</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span><span class="n">weights</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span><span class="n">tablefmt</span><span class="o">=</span><span class="s1">&#39;grid&#39;</span><span class="p">))</span>
 </pre></div>
 
 </div>
@@ -417,220 +563,145 @@ Huobi_BTCUSD_2016_01.csv
 
 
 <div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>connected !
+</pre>
+</div>
+</div>
+
+<div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>/home/ilyes/anaconda3/lib/python3.5/site-packages/plotly/plotly/plotly.py:236: UserWarning:
+<pre>/home/ilyes/anaconda3/lib/python3.5/site-packages/pandas/core/indexing.py:128: SettingWithCopyWarning:
 
-Woah there! Look at all those points! Due to browser limitations, the Plotly SVG drawing functions have a hard time graphing more than 500k data points for line charts, or 40k points for other types of charts. Here are some suggestions:
-(1) Use the &#96;plotly.graph_objs.Scattergl&#96; trace object to generate a WebGl graph.
-(2) Trying using the image API to return an image instead of a graph URL
-(3) Use matplotlib
-(4) See if you can create your visualization with fewer data points
 
-If the visualization you&apos;re using aggregates points (e.g., box plot, histogram, etc.) you can disregard this warning.
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
 
 </pre>
 </div>
 </div>
 
-<div class="output_area"><div class="prompt output_prompt">Out[10]:</div>
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~ilkhem/13.embed" height="525px" width="100%"></iframe>
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---------------------+------+------+------+------+------+------+------+------+------+
+| period              | gi   | ib   | kk   | bf   | cb   | hb   | be   | bs   | oc   |
++=====================+======+======+======+======+======+======+======+======+======+
+| 2016-04-25 00:00:00 | 6 ↗  | 2 =  | 8 ↗  | 1 =  | 9 ↘  | 3 ↗  | 4 ↗  | 7 =  | 5 ↘  |
++---------------------+------+------+------+------+------+------+------+------+------+
+| 2016-04-18 00:00:00 | 8 ↗  | 2 =  | 9 ↘  | 1 =  | 6 ↗  | 4 ↗  | 5 ↘  | 7 ↘  | 3 =  |
++---------------------+------+------+------+------+------+------+------+------+------+
+| 2016-04-11 00:00:00 | 9 =  | 2 =  | 8 =  | 1 =  | 7 =  | 5 ↘  | 4 ↘  | 6 ↘  | 3 ↗  |
++---------------------+------+------+------+------+------+------+------+------+------+
+| 2016-04-04 00:00:00 | 9 ↘  | 2 =  | 8 ↗  | 1 =  | 7 =  | 4 =  | 3 ↗  | 5 ↗  | 6 ↘  |
++---------------------+------+------+------+------+------+------+------+------+------+
+| 2016-03-28 00:00:00 | 8 ↗  | 2 =  | 9 ↘  | 1 =  | 7 =  | 4 =  | 5 ↗  | 6 ↘  | 3 =  |
++---------------------+------+------+------+------+------+------+------+------+------+
+| 2016-03-21 00:00:00 | 9 =  | 2 =  | 8 ↘  | 1 =  | 7 ↗  | 4 ↘  | 6 ↗  | 5 ↗  | 3 ↗  |
++---------------------+------+------+------+------+------+------+------+------+------+
+| 2016-03-14 00:00:00 | 9 =  | 2 =  | 5 ↗  | 1 =  | 8 ↘  | 3 =  | 7 =  | 6 ↘  | 4 =  |
++---------------------+------+------+------+------+------+------+------+------+------+
+| 2016-03-07 00:00:00 | 9 =  | 2 ↗  | 8 =  | 1 =  | 6 =  | 3 ↘  | 7 =  | 5 =  | 4 ↘  |
++---------------------+------+------+------+------+------+------+------+------+------+
+| 2016-02-29 00:00:00 | 9 =  | 4 ↗  | 8 ↘  | 1 =  | 6 =  | 2 ↗  | 7 ↗  | 5 =  | 3 ↘  |
++---------------------+------+------+------+------+------+------+------+------+------+
+| 2016-02-22 00:00:00 | 9 =  | 7 =  | 4 ↗  | 1 =  | 6 ↗  | 3 =  | 8 ↘  | 5 ↘  | 2 =  |
++---------------------+------+------+------+------+------+------+------+------+------+
+| 2016-02-15 00:00:00 | 9 =  | 7 ↘  | 5 ↗  | 1 ↗  | 8 ↘  | 3 =  | 6 ↗  | 4 ↗  | 2 ↘  |
++---------------------+------+------+------+------+------+------+------+------+------+
+| 2016-02-08 00:00:00 | 9 ↘  | 6 =  | 8 ↗  | 2 ↗  | 4 =  | 3 ↘  | 7 ↘  | 5 ↗  | 1 =  |
++---------------------+------+------+------+------+------+------+------+------+------+
+| 2016-02-01 00:00:00 | 8 ↘  | 6 ↘  | 9 =  | 3 =  | 4 ↗  | 2 =  | 5 ↗  | 7 ↗  | 1 =  |
++---------------------+------+------+------+------+------+------+------+------+------+
+| 2016-01-25 00:00:00 | 7 =  | 4 =  | 9 =  | 3 ↘  | 5 =  | 2 ↗  | 6 =  | 8 =  | 1 =  |
++---------------------+------+------+------+------+------+------+------+------+------+
+| 2016-01-18 00:00:00 | 7 ↗  | 4 ↗  | 9 =  | 2 =  | 5 ↘  | 3 =  | 6 =  | 8 ↘  | 1 =  |
++---------------------+------+------+------+------+------+------+------+------+------+
+| 2016-01-11 00:00:00 | 8 =  | 5 ↘  | 9 =  | 2 ↗  | 4 ↗  | 3 ↘  | 6 =  | 7 =  | 1 =  |
++---------------------+------+------+------+------+------+------+------+------+------+
+| 2016-01-04 00:00:00 | 8 =  | 4 ↘  | 9 =  | 3 ↗  | 5 =  | 2 =  | 6 =  | 7 =  | 1 =  |
++---------------------+------+------+------+------+------+------+------+------+------+
+| 2015-12-28 00:00:00 | 8    | 3    | 9    | 4    | 5    | 2    | 6    | 7    | 1    |
++---------------------+------+------+------+------+------+------+------+------+------+
+</pre>
 </div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Let's take a closer look at this chart.</p>
-<ul>
-<li>Coinbase, BTC-e, Huobi and Okcoin show presence of trading bots because robots usually tend to place multiple trades at low amounts. Huobi is very present at very low bitcoin values, a possible explanation is that the majority of traders on Huobi who trade in USD are bots.</li>
-<li>Bitfinex, on the other hand, looks like a serious exchange. Compared to the four we described above, it is relatively more present in buckets with high values</li>
-</ul>
-<p>Let's check the relative presence of the exchanges for each bucket.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">trades2</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="n">dic</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;gi&#39;</span><span class="p">:</span><span class="s1">&#39;Gemini&#39;</span><span class="p">,</span><span class="s1">&#39;be&#39;</span><span class="p">:</span><span class="s1">&#39;BTC-e&#39;</span><span class="p">,</span><span class="s1">&#39;hb&#39;</span><span class="p">:</span><span class="s1">&#39;Huobi&#39;</span><span class="p">,</span><span class="s1">&#39;ib&#39;</span><span class="p">:</span><span class="s1">&#39;Itbit&#39;</span><span class="p">,</span><span class="s1">&#39;bs&#39;</span><span class="p">:</span><span class="s1">&#39;Bitstamp&#39;</span><span class="p">,</span><span class="s1">&#39;bf&#39;</span><span class="p">:</span><span class="s1">&#39;Bitfinex&#39;</span><span class="p">,</span><span class="s1">&#39;kk&#39;</span><span class="p">:</span><span class="s1">&#39;Kraken&#39;</span><span class="p">,</span><span class="s1">&#39;oc&#39;</span><span class="p">:</span><span class="s1">&#39;OkCoin&#39;</span><span class="p">,</span><span class="s1">&#39;cb&#39;</span><span class="p">:</span><span class="s1">&#39;Coinbase&#39;</span><span class="p">}</span>
-<span class="n">d</span><span class="p">[</span><span class="s1">&#39;sz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;amount&#39;</span><span class="p">]</span>
-<span class="n">d</span><span class="p">[</span><span class="s1">&#39;sz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;sz&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span> <span class="k">else</span> <span class="o">-</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">xl</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sz&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
-<span class="n">xl</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&gt;&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">sz</span><span class="p">)</span> <span class="k">for</span> <span class="n">sz</span> <span class="ow">in</span> <span class="n">xl</span><span class="p">]</span>
-<span class="n">uxch</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">exchange</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
-<span class="n">trace</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">xch</span> <span class="ow">in</span> <span class="n">uxch</span><span class="p">:</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">[(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;exchange&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">xch</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sz&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">sz</span><span class="p">)])</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sz&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">sz</span><span class="p">])</span> <span class="k">for</span> <span class="n">sz</span> <span class="ow">in</span> <span class="n">xl</span><span class="p">]</span>
-
-    <span class="n">trace</span> <span class="o">=</span> <span class="n">trace</span> <span class="o">+</span> <span class="p">[</span><span class="n">go</span><span class="o">.</span><span class="n">Bar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="n">dic</span><span class="p">[</span><span class="n">xch</span><span class="p">],</span><span class="n">opacity</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">)]</span>
-<span class="n">layout</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span>
-    <span class="n">barmode</span><span class="o">=</span><span class="s1">&#39;stack&#39;</span><span class="p">,</span> <span class="c1">#stack, overlay, group</span>
-    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Percentage of number of trades per exchange per amount for 2016&#39;</span><span class="p">,</span>
-    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">title</span><span class="o">=</span><span class="s1">&#39;log10 of amount&#39;</span>
-
-    <span class="p">),</span>
-    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Percentage&#39;</span>
-    <span class="p">),</span>
-    <span class="n">bargap</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
-    <span class="n">bargroupgap</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">d</span><span class="o">=</span><span class="kc">None</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">trace</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">)</span>
-<span class="n">py</span><span class="o">.</span><span class="n">iplot</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;all-xch-usd-2016-2&#39;</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[11]:</div>
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~ilkhem/15.embed" height="525px" width="100%"></iframe>
-</div>
-
 </div>
 
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>We were right. The greater the bucket size, the more present is Bitfinex. The high average volume per trade we saw on Bitfinex earlier is due to the presence of big trades happening on the exchange.
-Itbit is different though. His market share is small and according to the second chart, very little trades happen on almost all size buckets. The next chart will allow us to draw a conclusion concerning Itbit.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">trades2</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="n">dic</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;gi&#39;</span><span class="p">:</span><span class="s1">&#39;Gemini&#39;</span><span class="p">,</span><span class="s1">&#39;be&#39;</span><span class="p">:</span><span class="s1">&#39;BTC-e&#39;</span><span class="p">,</span><span class="s1">&#39;hb&#39;</span><span class="p">:</span><span class="s1">&#39;Huobi&#39;</span><span class="p">,</span><span class="s1">&#39;ib&#39;</span><span class="p">:</span><span class="s1">&#39;Itbit&#39;</span><span class="p">,</span><span class="s1">&#39;bs&#39;</span><span class="p">:</span><span class="s1">&#39;Bitstamp&#39;</span><span class="p">,</span><span class="s1">&#39;bf&#39;</span><span class="p">:</span><span class="s1">&#39;Bitfinex&#39;</span><span class="p">,</span><span class="s1">&#39;kk&#39;</span><span class="p">:</span><span class="s1">&#39;Kraken&#39;</span><span class="p">,</span><span class="s1">&#39;oc&#39;</span><span class="p">:</span><span class="s1">&#39;OkCoin&#39;</span><span class="p">,</span><span class="s1">&#39;cb&#39;</span><span class="p">:</span><span class="s1">&#39;Coinbase&#39;</span><span class="p">}</span>
-<span class="n">d</span><span class="p">[</span><span class="s1">&#39;sz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;amount&#39;</span><span class="p">]</span>
-<span class="n">d</span><span class="p">[</span><span class="s1">&#39;sz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;sz&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span> <span class="k">else</span> <span class="o">-</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">szl</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sz&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
-<span class="n">szl</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-<span class="n">szl</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">szl</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">szl</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">szl</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">xl</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">exchange</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
-<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">dic</span><span class="p">[</span><span class="n">xch</span><span class="p">]</span> <span class="k">for</span> <span class="n">xch</span> <span class="ow">in</span> <span class="n">xl</span><span class="p">]</span>
-<span class="n">trace</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">sz</span> <span class="ow">in</span> <span class="n">szl</span><span class="p">:</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">[(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;exchange&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">xch</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sz&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">sz</span><span class="p">)])</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;exchange&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">xch</span><span class="p">])</span> <span class="k">for</span> <span class="n">xch</span> <span class="ow">in</span> <span class="n">xl</span><span class="p">]</span>
-    <span class="n">trace</span> <span class="o">=</span> <span class="n">trace</span> <span class="o">+</span> <span class="p">[</span><span class="n">go</span><span class="o">.</span><span class="n">Bar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;&gt;&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">sz</span><span class="p">),</span><span class="n">opacity</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">)]</span>
-<span class="n">layout</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span>
-    <span class="n">barmode</span><span class="o">=</span><span class="s1">&#39;group&#39;</span><span class="p">,</span> <span class="c1">#stack, overlay, group</span>
-    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Distribution of trade amounts per exchange for 2016&#39;</span><span class="p">,</span>
-    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Exchange&#39;</span>
-    <span class="p">),</span>
-    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Percentage&#39;</span>
-    <span class="p">),</span>
-    <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">bargap</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
-    <span class="n">bargroupgap</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">d</span><span class="o">=</span><span class="kc">None</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">trace</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">)</span>
-<span class="n">py</span><span class="o">.</span><span class="n">iplot</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;all-xch-usd-2016-3&#39;</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[13]:</div>
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~ilkhem/17.embed" height="525px" width="100%"></iframe>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>50% of Itbit's trades have amounts higher than 1btc. As for COinbase, BTC-e and OkCoin, the presence of bots is reconfirmed as we see that more than 60% of their trades happen at prices lower than 0.1btc. Huobi is present on almost all buckets with considerable propotions. Not only bots trade there.
-Kraken, Bitfinec and Gemini seem to be the most serious exchanges : most of their trades have amounts superior to 1btc.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Let's now look closer at the traded volumes per bucket and in general for each exchange.</p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">trades2</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="n">dic</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;gi&#39;</span><span class="p">:</span><span class="s1">&#39;Gemini&#39;</span><span class="p">,</span><span class="s1">&#39;be&#39;</span><span class="p">:</span><span class="s1">&#39;BTC-e&#39;</span><span class="p">,</span><span class="s1">&#39;hb&#39;</span><span class="p">:</span><span class="s1">&#39;Huobi&#39;</span><span class="p">,</span><span class="s1">&#39;ib&#39;</span><span class="p">:</span><span class="s1">&#39;Itbit&#39;</span><span class="p">,</span><span class="s1">&#39;bs&#39;</span><span class="p">:</span><span class="s1">&#39;Bitstamp&#39;</span><span class="p">,</span><span class="s1">&#39;bf&#39;</span><span class="p">:</span><span class="s1">&#39;Bitfinex&#39;</span><span class="p">,</span><span class="s1">&#39;kk&#39;</span><span class="p">:</span><span class="s1">&#39;Kraken&#39;</span><span class="p">,</span><span class="s1">&#39;oc&#39;</span><span class="p">:</span><span class="s1">&#39;OkCoin&#39;</span><span class="p">,</span><span class="s1">&#39;cb&#39;</span><span class="p">:</span><span class="s1">&#39;Coinbase&#39;</span><span class="p">}</span>
-<span class="n">xl</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">exchange</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
-<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">dic</span><span class="p">[</span><span class="n">xch</span><span class="p">]</span> <span class="k">for</span> <span class="n">xch</span> <span class="ow">in</span> <span class="n">xl</span><span class="p">]</span>
-<span class="n">trace</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Bar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;exchange&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">xch</span><span class="p">]</span><span class="o">.</span><span class="n">amount</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="k">for</span> <span class="n">xch</span> <span class="ow">in</span> <span class="n">xl</span><span class="p">])</span>
-<span class="n">layout</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Total traded Volume per exchange&#39;</span><span class="p">,</span>
-    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Exchange&#39;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">floor</span><span class="p">,</span> <span class="n">log10</span>
 
-    <span class="p">),</span>
-    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Traded volume&#39;</span>
-    <span class="p">),</span>
-    <span class="n">bargap</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
-    <span class="n">bargroupgap</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">d</span><span class="o">=</span><span class="kc">None</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="n">trace</span><span class="p">],</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">)</span>
-<span class="n">py</span><span class="o">.</span><span class="n">iplot</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;traded-volume-xch&#39;</span><span class="p">)</span>
+<span class="n">directory</span><span class="o">=</span><span class="s1">&#39;../Kaiko/data/trades/usd/&#39;</span>
+<span class="n">month</span> <span class="o">=</span> <span class="s1">&#39;04&#39;</span>
+<span class="n">year</span> <span class="o">=</span> <span class="s1">&#39;2016&#39;</span>
+
+<span class="n">month_to_monthStr</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;01&#39;</span><span class="p">:</span><span class="s1">&#39;January&#39;</span><span class="p">,</span><span class="s1">&#39;02&#39;</span><span class="p">:</span><span class="s1">&#39;February&#39;</span><span class="p">,</span><span class="s1">&#39;03&#39;</span><span class="p">:</span><span class="s1">&#39;March&#39;</span><span class="p">,</span><span class="s1">&#39;04&#39;</span><span class="p">:</span><span class="s1">&#39;April&#39;</span><span class="p">,</span><span class="s1">&#39;05&#39;</span><span class="p">:</span><span class="s1">&#39;May&#39;</span><span class="p">,</span><span class="s1">&#39;06&#39;</span><span class="p">:</span><span class="s1">&#39;June&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;07&#39;</span><span class="p">:</span><span class="s1">&#39;July&#39;</span><span class="p">,</span><span class="s1">&#39;08&#39;</span><span class="p">:</span><span class="s1">&#39;August&#39;</span><span class="p">,</span><span class="s1">&#39;09&#39;</span><span class="p">:</span><span class="s1">&#39;September&#39;</span><span class="p">,</span><span class="s1">&#39;10&#39;</span><span class="p">:</span><span class="s1">&#39;October&#39;</span><span class="p">,</span><span class="s1">&#39;11&#39;</span><span class="p">:</span><span class="s1">&#39;November&#39;</span><span class="p">,</span><span class="s1">&#39;12&#39;</span><span class="p">:</span><span class="s1">&#39;December&#39;</span><span class="p">}</span>
+
+<span class="n">monthStr</span> <span class="o">=</span> <span class="n">month_to_monthStr</span><span class="p">[</span><span class="n">month</span><span class="p">]</span> 
+    
+<span class="n">gi</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">be</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">ib</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">bs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">bf</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">kk</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">cb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">hb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">oc</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="n">givol</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">bevol</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">ibvol</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">bsvol</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">bfvol</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">kkvol</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">cbvol</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">hbvol</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">ocvol</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">bucket</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="o">!=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">b</span><span class="o">=-</span><span class="mi">6</span>
+    <span class="k">if</span> <span class="n">b</span> <span class="o">&gt;</span><span class="mi">3</span><span class="p">:</span>
+        <span class="n">b</span><span class="o">=</span><span class="mi">3</span>
+    <span class="k">if</span> <span class="n">b</span><span class="o">&lt;-</span><span class="mi">6</span><span class="p">:</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="o">-</span><span class="mi">6</span>
+    <span class="k">return</span> <span class="n">b</span> <span class="o">+</span> <span class="mi">6</span>
+
+<span class="c1"># lines in csv file : id,exchange,symbol,date,price,amount,sell</span>
+<span class="k">def</span> <span class="nf">getData</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">xch</span><span class="p">,</span><span class="n">xchvol</span><span class="p">):</span>
+    <span class="k">try</span> <span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">directory</span><span class="o">+</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span> <span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;reading &#39;</span><span class="o">+</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">xch</span><span class="p">[</span><span class="n">bucket</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)[</span><span class="mi">5</span><span class="p">]))]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">xchvol</span><span class="p">[</span><span class="n">bucket</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)[</span><span class="mi">5</span><span class="p">]))]</span> <span class="o">+=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)[</span><span class="mi">5</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span> <span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">filename</span><span class="o">+</span><span class="s1">&#39; does not exist, please check your files and try again.&#39;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">getData</span><span class="p">(</span><span class="s1">&#39;Huobi_BTCUSD_&#39;</span><span class="o">+</span><span class="n">year</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">month</span><span class="o">+</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span><span class="n">hb</span><span class="p">,</span><span class="n">hbvol</span><span class="p">)</span>
+<span class="n">getData</span><span class="p">(</span><span class="s1">&#39;OkCoin_BTCUSD_&#39;</span><span class="o">+</span><span class="n">year</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">month</span><span class="o">+</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span><span class="n">oc</span><span class="p">,</span><span class="n">ocvol</span><span class="p">)</span>
+<span class="n">getData</span><span class="p">(</span><span class="s1">&#39;Bitfinex_BTCUSD_&#39;</span><span class="o">+</span><span class="n">year</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">month</span><span class="o">+</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span><span class="n">bf</span><span class="p">,</span><span class="n">bfvol</span><span class="p">)</span>
+<span class="n">getData</span><span class="p">(</span><span class="s1">&#39;Bitstamp_BTCUSD_&#39;</span><span class="o">+</span><span class="n">year</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">month</span><span class="o">+</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span><span class="n">bs</span><span class="p">,</span><span class="n">bsvol</span><span class="p">)</span>
+<span class="n">getData</span><span class="p">(</span><span class="s1">&#39;Gemini_BTCUSD_&#39;</span><span class="o">+</span><span class="n">year</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">month</span><span class="o">+</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span><span class="n">gi</span><span class="p">,</span><span class="n">givol</span><span class="p">)</span>
+<span class="n">getData</span><span class="p">(</span><span class="s1">&#39;Itbit_BTCUSD_&#39;</span><span class="o">+</span><span class="n">year</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">month</span><span class="o">+</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span><span class="n">ib</span><span class="p">,</span><span class="n">ibvol</span><span class="p">)</span>
+<span class="n">getData</span><span class="p">(</span><span class="s1">&#39;Coinbase_BTCUSD_&#39;</span><span class="o">+</span><span class="n">year</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">month</span><span class="o">+</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span><span class="n">cb</span><span class="p">,</span><span class="n">cbvol</span><span class="p">)</span>
+<span class="n">getData</span><span class="p">(</span><span class="s1">&#39;Kraken_BTCUSD_&#39;</span><span class="o">+</span><span class="n">year</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">month</span><span class="o">+</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span><span class="n">kk</span><span class="p">,</span><span class="n">kkvol</span><span class="p">)</span>
+<span class="n">getData</span><span class="p">(</span><span class="s1">&#39;BTC-e_BTCUSD_&#39;</span><span class="o">+</span><span class="n">year</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">month</span><span class="o">+</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span><span class="n">be</span><span class="p">,</span><span class="n">bevol</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -641,12 +712,19 @@ Kraken, Bitfinec and Gemini seem to be the most serious exchanges : most of thei
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[15]:</div>
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~ilkhem/21.embed" height="525px" width="100%"></iframe>
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>reading Huobi_BTCUSD_2016_04.csv
+reading OkCoin_BTCUSD_2016_04.csv
+reading Bitfinex_BTCUSD_2016_04.csv
+reading Bitstamp_BTCUSD_2016_04.csv
+reading Gemini_BTCUSD_2016_04.csv
+reading Itbit_BTCUSD_2016_04.csv
+reading Coinbase_BTCUSD_2016_04.csv
+reading Kraken_BTCUSD_2016_04.csv
+reading BTC-e_BTCUSD_2016_04.csv
+</pre>
 </div>
-
 </div>
 
 </div>
@@ -655,37 +733,56 @@ Kraken, Bitfinec and Gemini seem to be the most serious exchanges : most of thei
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">trades2</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="n">dic</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;gi&#39;</span><span class="p">:</span><span class="s1">&#39;Gemini&#39;</span><span class="p">,</span><span class="s1">&#39;be&#39;</span><span class="p">:</span><span class="s1">&#39;BTC-e&#39;</span><span class="p">,</span><span class="s1">&#39;hb&#39;</span><span class="p">:</span><span class="s1">&#39;Huobi&#39;</span><span class="p">,</span><span class="s1">&#39;ib&#39;</span><span class="p">:</span><span class="s1">&#39;Itbit&#39;</span><span class="p">,</span><span class="s1">&#39;bs&#39;</span><span class="p">:</span><span class="s1">&#39;Bitstamp&#39;</span><span class="p">,</span><span class="s1">&#39;bf&#39;</span><span class="p">:</span><span class="s1">&#39;Bitfinex&#39;</span><span class="p">,</span><span class="s1">&#39;kk&#39;</span><span class="p">:</span><span class="s1">&#39;Kraken&#39;</span><span class="p">,</span><span class="s1">&#39;oc&#39;</span><span class="p">:</span><span class="s1">&#39;OkCoin&#39;</span><span class="p">,</span><span class="s1">&#39;cb&#39;</span><span class="p">:</span><span class="s1">&#39;Coinbase&#39;</span><span class="p">}</span>
-<span class="n">d</span><span class="p">[</span><span class="s1">&#39;sz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;amount&#39;</span><span class="p">]</span>
-<span class="n">d</span><span class="p">[</span><span class="s1">&#39;sz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;sz&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span> <span class="k">else</span> <span class="o">-</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">xl</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sz&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
-<span class="n">xl</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&gt;&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">sz</span><span class="p">)</span> <span class="k">for</span> <span class="n">sz</span> <span class="ow">in</span> <span class="n">xl</span><span class="p">]</span>
-<span class="n">uxch</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">exchange</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
-<span class="n">trace</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">xch</span> <span class="ow">in</span> <span class="n">uxch</span><span class="p">:</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;exchange&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">xch</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sz&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">sz</span><span class="p">)]</span><span class="o">.</span><span class="n">amount</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="k">for</span> <span class="n">sz</span> <span class="ow">in</span> <span class="n">xl</span><span class="p">]</span>
-    <span class="n">trace</span> <span class="o">=</span> <span class="n">trace</span> <span class="o">+</span> <span class="p">[</span><span class="n">go</span><span class="o">.</span><span class="n">Bar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="n">dic</span><span class="p">[</span><span class="n">xch</span><span class="p">],</span><span class="n">opacity</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">)]</span>
-<span class="n">layout</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span>
-    <span class="n">barmode</span><span class="o">=</span><span class="s1">&#39;group&#39;</span><span class="p">,</span> <span class="c1">#stack, overlay, group</span>
-    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Bitcoin volume distribution per amount per exchange for 2016&#39;</span><span class="p">,</span>
-    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Amount&#39;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">trace</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="p">),</span>
-    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Traded volume&#39;</span>
-    <span class="p">),</span>
-    <span class="n">bargap</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
-    <span class="n">bargroupgap</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hb</span><span class="p">)):</span>
+    
+    <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Gemini&#39;</span><span class="p">,</span><span class="s1">&#39;BTC-e&#39;</span><span class="p">,</span><span class="s1">&#39;Huobi&#39;</span><span class="p">,</span><span class="s1">&#39;Itbit&#39;</span><span class="p">,</span><span class="s1">&#39;Bitstamp&#39;</span><span class="p">,</span><span class="s1">&#39;Bitfinex&#39;</span><span class="p">,</span><span class="s1">&#39;Kraken&#39;</span><span class="p">,</span><span class="s1">&#39;OkCoin&#39;</span><span class="p">,</span><span class="s1">&#39;Coinbase&#39;</span><span class="p">]</span>
+    <span class="n">y2</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">givol</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">bevol</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">hbvol</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ibvol</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">bsvol</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">bfvol</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">kkvol</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ocvol</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cbvol</span><span class="p">)]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">gi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">gi</span><span class="p">),</span><span class="n">be</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">be</span><span class="p">),</span><span class="n">hb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">hb</span><span class="p">),</span><span class="n">ib</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ib</span><span class="p">),</span><span class="n">bs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">bs</span><span class="p">),</span><span class="n">bf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">bf</span><span class="p">),</span><span class="n">kk</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">kk</span><span class="p">),</span><span class="n">oc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">oc</span><span class="p">),</span><span class="n">cb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cb</span><span class="p">)]</span>
+    
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span><span class="n">x</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">:</span><span class="n">y</span><span class="p">,</span><span class="s1">&#39;y2&#39;</span><span class="p">:</span><span class="n">y2</span><span class="p">})</span>
+    <span class="n">temp</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;y2&#39;</span><span class="p">,</span><span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
+    <span class="n">x</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">temp</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">temp</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">y2</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">temp</span><span class="p">[</span><span class="s1">&#39;y2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">temp</span> 
+    
+    
+    <span class="n">trace</span> <span class="o">+=</span> <span class="p">[</span>
+                <span class="n">go</span><span class="o">.</span><span class="n">Bar</span><span class="p">(</span>
+                    <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+                    <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+                    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&gt;&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">6</span><span class="p">)),</span><span class="n">opacity</span><span class="o">=</span><span class="mf">0.77</span>
+                <span class="p">)</span> 
+                
+             <span class="p">]</span>
+<span class="n">trace</span> <span class="o">=</span> <span class="n">trace</span> <span class="o">+</span> <span class="p">[</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y2</span><span class="p">,</span><span class="n">yaxis</span><span class="o">=</span><span class="s1">&#39;y2&#39;</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Volume&#39;</span><span class="p">)]</span>
+<span class="n">layout</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span>
+        <span class="n">barmode</span><span class="o">=</span><span class="s1">&#39;stack&#39;</span><span class="p">,</span> <span class="c1">#stack, overlay, group</span>
+        <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Distribution of trade amounts per exchange in BTC-USD for &#39;</span><span class="o">+</span><span class="n">monthStr</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="n">year</span><span class="p">,</span>
+        <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Exchange&#39;</span>
+        <span class="p">),</span>
+        <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Percentage&#39;</span>
+        <span class="p">),</span>
+        <span class="n">yaxis2</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Volume&#39;</span><span class="p">,</span>
+            <span class="n">overlaying</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span>
+            <span class="n">side</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span>
+            <span class="n">showgrid</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">rangemode</span><span class="o">=</span><span class="s1">&#39;tozero&#39;</span>
+        <span class="p">),</span>
+<span class="c1">#            showlegend=False,</span>
+        <span class="n">bargap</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+        <span class="n">bargroupgap</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">d</span><span class="o">=</span><span class="kc">None</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">trace</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">)</span>
-<span class="n">py</span><span class="o">.</span><span class="n">iplot</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;all-xch-usd-volume&#39;</span><span class="p">)</span>
+<span class="n">py</span><span class="o">.</span><span class="n">iplot</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;usd/usd-&#39;</span><span class="o">+</span><span class="n">monthStr</span><span class="o">+</span><span class="n">year</span><span class="o">+</span><span class="s1">&#39;-xchdist&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -696,10 +793,10 @@ Kraken, Bitfinec and Gemini seem to be the most serious exchanges : most of thei
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[16]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[18]:</div>
 
 <div class="output_html rendered_html output_subarea output_execute_result">
-<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~ilkhem/19.embed" height="525px" width="100%"></iframe>
+<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~ilkhem/78.embed" height="525px" width="100%"></iframe>
 </div>
 
 </div>
@@ -713,39 +810,7 @@ Kraken, Bitfinec and Gemini seem to be the most serious exchanges : most of thei
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Conclusions">Conclusions<a class="anchor-link" href="#Conclusions">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Here we draw the conclusions we made about each exchange (we only consider exchanges trading in USD)</p>
-<ul>
-<li>Bitfinex has the highest trading volume. Trades on Bitfinex usually have high amounts and has the highest market share for trades of higher amounts than 1BTC. It is the exchange for serious human traders and easy to track since it doesn't have high number of trades happening every day. Bitfinex is also the only exchange where trades of very high amounts (&gt;1000BTC) happened in 2016.</li>
-<li>Huobi has the second highest trading volume (25% less than Bitfinex).Most of Huobi's volume comes from medium size trades (~1BTC or less). Around 20% of Huobi's trades happen at very low amounts (~0.0001 and ~0.001). In addition, Huobi has a high market share in medium size trades. This exchange show presence of robots through very small trades in high number, but also presence of humans through trades with relatively high amounts.</li>
-<li>Coinnbase and BTC-e are exchanges with very high number of bots. BTC-e show trades happening with very low amounts (~1e-8). Such trades can be ignored for a price-estimator since their fluctuations doesn't follow the price changes.</li>
-<li>Kraken and Gemini have minimal activities in BTC-USD trading. This is shown by very low traded volumes but also small market shares at every amoun bucket.</li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>General conclusions :</p>
-<ul>
-<li>bots are present in btc-usd markets. Their activity is to be monitored to measure their impact on bitcoin price change.</li>
-<li>huge trades are very rare (only one trade above 1000btc in 2016) -&gt; measure impact of trades &gt;100 btc on the price</li>
-<li>for some exchanges, the average amount traded per day is highly fluctuating. This may suggest the presence of aggressive traders --&gt; monitor their presence using orderbook data</li>
-<li>...</li>
-</ul>
-
+<h2 id="Donn&#233;es-d'ordres">Donn&#233;es d'ordres<a class="anchor-link" href="#Donn&#233;es-d'ordres">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -754,7 +819,7 @@ Kraken, Bitfinec and Gemini seem to be the most serious exchanges : most of thei
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span>
+<div class=" highlight hl-ipython3"><pre><span></span> 
 </pre></div>
 
 </div>
